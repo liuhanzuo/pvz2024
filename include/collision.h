@@ -1,10 +1,7 @@
-#ifndef __COLLISION_H_
-#define __COLLISION_H_
-#include"putimage.h"
-void imagebullet();
-void shoot();
-void updatebullet();
-void collisionbullet2zm();
-void collisionzm2zw();
-void collisioncheck();
+#ifndef __COLLISION_H__
+#define __COLLISION_H__
+#include "item.h"
+class CollisionHelper{
+    void Detect(const Item& a,const Item& b);
+};
 #endif

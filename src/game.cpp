@@ -1,40 +1,71 @@
-#include"game.h"
-void updateimage() {
-	BeginBatchDraw();
-	putimage(-112, 0, &imgbg);
-	putimage(250, 0, &imgbar);
+#include "game.h"
+void gameInit() {
+	loadimage(&imgbg, "images/bg.jpg");
+	loadimage(&imgbar, "images/bar4.png");
+	memset(imgzhiwu, 0, sizeof(imgzhiwu));
+	memset(zw, 0, sizeof(zw));
+	char name[64];
 	for (int i = 0; i < cnt; i++) {
-		int x = startx + i * dis;
-		int y = starty;
-		putimage(x, y, &imgcards[i]);
-	}
-	for (int i = 0; i < rowl; i++) {
-		for (int j = 0; j < columnl; j++) {
-			int x = 256 - 112 + j * 81;
-			int y = 179 + i * 102;
-			int tp = zw[i][j].type;
-			IMAGE* img = imgzhiwu[zw[i][j].type - 1][zw[i][j].frameindex];
-			if (tp && tp != 3) {
-				putimagePNG(x, y, img);
+		sprintf_s(name, sizeof(name), "images/Cards/card_%d.png", i + 1);
+		loadimage(&imgcards[i], name);
+		for (int j = 0; j < 20; j++) {
+			sprintf_s(name, sizeof(name), "images/zhiwu/%d/%d.png", i, j + 1);
+			if (fileexist(name)) {
+				imgzhiwu[i][j] = new IMAGE;
+				loadimage(imgzhiwu[i][j], name);
 			}
-			else if (tp == 3) {
-				putimagePNG(x, y - 25, img);
+			else {
+				break;
 			}
 		}
 	}
-	if (curzhiwu) {
-		IMAGE* img = imgzhiwu[curzhiwu - 1][0];
-		putimagePNG(curx - img->getwidth() / 2, cury - img->getheight() / 2, img);
+	needsun[1] = 100;
+	needsun[2] = 50;
+	needsun[3] = 150;
+	needsun[4] = 50;
+	memset(ball, 0, sizeof(ball));
+	for (int i = 1; i <= 29; i++) {
+		sprintf_s(name, sizeof(name), "images/sunshine/%d.png", i);
+		loadimage(&balls[i-1], name);
 	}
-	imagesunshine();
-	imagezombies();
-	imagebullet();
-	char text[16];
-	sprintf_s(text, sizeof(text), "%d", cursun);
-	outtextxy(276, 55, text);
-	EndBatchDraw();
+	memset(zms, 0, sizeof(zms));
+	for (int i = 1; i <= 22; i++) {
+		sprintf_s(name, sizeof(name), "images/zm/%d.png", i);
+		loadimage(&z[i-1], name);
+	}
+	memset(bullets, 0, sizeof(bullets));
+	loadimage(&bulletn, "images/bullets/bullet_normal.png");
+	loadimage(&imgballblast[3], "images/bullets/bullet_blast.png");
+	for (int i = 0; i < 3; i++) {
+		float k = (i + 1) * 0; 2;
+		loadimage(&imgballblast[i], "images/bulltes/bullet_blast.png", imgballblast[3].getwidth() * k, imgballblast[3].getheight()*k);
+	}
+	for (int i = 0; i < 20; i++) {
+		sprintf_s(name,sizeof(name), "images/zm_dead/%d.png", i + 1);
+		loadimage(&zmdied[i], name);
+	}
+	for (int i = 0; i < 21; i++) {
+		sprintf_s(name, sizeof(name), "images/zm_eat/%d.png", i + 1);
+		loadimage(&zmseat[i], name);
+	}
+	for (int i = 0; i < 11; i++) {
+		sprintf_s(name, sizeof(name), "images/zm_stand/%d.png", i + 1);
+		loadimage(&zmsstand[i], name);
+	}
+	srand(time(NULL));
+	initgraph(width, height, 1);
+	LOGFONT f;
+	gettextstyle(&f);
+	f.lfHeight = 30;
+	f.lfWeight = 15;
+	strcpy(f.lfFaceName, "Segoe UI Black");
+	f.lfQuality = ANTIALIASED_QUALITY;
+	settextstyle(&f);
+	setbkmode(TRANSPARENT);
+	setcolor(BLACK);
 }
-bool win() {
+
+bool Win(){
 	if (zmsdied >= zmsamount) {
 		IMAGE imgwon;
 		printf("win\n");
@@ -45,45 +76,39 @@ bool win() {
 	}
 	return true;
 }
-void userclick() {
-	ExMessage msg;
-	if (peekmessage(&msg)) {
-		if (msg.message == WM_LBUTTONDOWN) {
-			if (msg.x >= startx && msg.x < startx + cnt * dis && msg.y < 96) {
-				int index = (msg.x - 338) / 65;
-				if (cursun >= needsun[index + 1]) {
-					status = 1;
-					curzhiwu = index + 1;
-				}
-			}
-			collectsunshine(&msg);
-		}
-		else if (msg.message == WM_MOUSEMOVE && status == 1) {
-			curx = msg.x;
-			cury = msg.y;
-		}
-		else if (msg.message = WM_LBUTTONUP && status == 1) {
-			if (msg.x > 256 - 112 && msg.y > 179 && msg.y < 489) {
-				int row = (msg.y - 179) / 102;
-				int col = (msg.x - 256 + 112) / 81;
-				if (zw[row][col].type == 0) {
-					zw[row][col].type = curzhiwu;
-					zw[row][col].frameindex = 0;
-					zw[row][col].hp = 100;
-					cursun -= needsun[curzhiwu];
-				}
-			}
-			curzhiwu = 0;
-			status = 0;
-		}
-		int row = (msg.y - 179) / 102;
-		int col = (msg.x - 256 + 112) / 81;
-		if ((GetAsyncKeyState('Q') & 0x8000) && zw[row][col].type) {
-			zw[row][col].type = 0;
-		}
+
+void CreateZombies(){
+	if (zmscreate > zmsamount) {
+		return;
 	}
+	static int count = 0;
+	static int fr=150;
+	static int fre = 150;
+	if (GetAsyncKeyState(VK_SPACE)) {
+		fr = 30;
+	}
+	count++;
+	if (count < fre) {
+		return;
+	}
+	count = 0;
+	fre = fr + rand() % (fr/3);
+	int i = 0;
+	while (i < 50 && zms[i].flag)
+		i++;
+	if (i >= 50)
+		return;
+	zmscreate++;
+	zms[i].flag = 1;
+	zms[i].frameindex = 0;
+	zms[i].x = width;
+	zms[i].row = rand() % 3;
+	zms[i].y = 140 + zms[i].row * 100;
+	zms[i].speed = 2 + rand() % 3;
+	zms[i].hp = 100;
 }
-void updategame() {
+
+void Game::UpdateStep(){
 	for (int i = 0; i < rowl; i++) {
 		for (int j = 0; j < columnl; j++) {
 			if (!zw[i][j].type) {
@@ -102,51 +127,8 @@ void updategame() {
 	updatebullet();
 	collisioncheck();
 }
-void start() {
-	IMAGE imgbg0, imgbg1, imgbg2;
-	loadimage(&imgbg0, "images/menu.png");
-	loadimage(&imgbg1, "images/menu1.png");
-	loadimage(&imgbg2, "images/menu2.png");
-	int flag0 = 0;
-	while (true) {
-		BeginBatchDraw();
-		putimage(0, 0, &imgbg0);
-		putimagePNG(474, 75, flag0 ? &imgbg2 : &imgbg1);
-		EndBatchDraw();
-		ExMessage msg;
-		if (!peekmessage(&msg)) {
-			continue;
-		}
-		if (msg.x > 474 && msg.x < (474 + 300)
-			&& msg.y > 75 && msg.y < (75 + 140)) {
-			flag0 = 1;
-		}
-		else {
-			flag0 = 0;
-		}
-		if (msg.message == WM_LBUTTONUP && flag0) {
-			EndBatchDraw();
-			break;
-		}
-	}
-}
-void ready() {
-	IMAGE r[4];
-	loadimage(&imgbg, "images/bg.jpg");
-	loadimage(&r[1], "images/StartReady.png");
-	loadimage(&r[2], "images/StartSet.png");
-	loadimage(&r[3], "images/StartPlant.png");
-	putimage(-112, 0, &imgbg);
-	int qwq = 0;
-	for (int i = 1; i <= 3; i++) {
-		while (qwq <= 600) {
-			qwq += getdelay();
-			putimage(400, 200, &r[i]);
-		}
-		qwq = 0;
-	}
-}
-void view() {
+
+void PlayVideo(){
 	int xmin = width - imgbg.getwidth();
 	int xs[9] = { 550,530,630,530,515,565,605,705,690 };
 	int ys[9] = { 80,160,170,200,270,370,340,280,340 };
@@ -160,7 +142,7 @@ void view() {
 		putimage(x, 0, &imgbg);
 		count++;
 		for (int k = 0; k < 9; k++) {
-			putimagePNG(xs[k] - xmin + x, ys[k], &zmsstand[index[k]]);
+			putimagePNG(xs[k]-xmin+x,ys[k],&zmsstand[index[k]]);
 			if (count >= 10) {
 				index[k] = (index[k] + 1) % 11;
 			}
@@ -171,6 +153,7 @@ void view() {
 		EndBatchDraw();
 		Sleep(5);
 	}
+	//ͣ��1s����
 	for (int i = 0; i < 100; i++) {
 		BeginBatchDraw();
 		putimage(xmin, 0, &imgbg);
@@ -196,5 +179,53 @@ void view() {
 		}
 		EndBatchDraw();
 		Sleep(5);
+	}
+}
+
+
+void Game::Start(){
+	//���������˵�
+	IMAGE imgbg0,imgbg1,imgbg2;
+	loadimage(&imgbg0, "images/menu.png");
+	loadimage(&imgbg1, "images/menu1.png");
+	loadimage(&imgbg2, "images/menu2.png");
+	int flag0 = 0;
+	while (true) {
+		BeginBatchDraw();
+		putimage(0, 0, &imgbg0);
+		putimagePNG(474, 75, flag0 ? &imgbg2 : &imgbg1);
+		EndBatchDraw();
+		ExMessage msg;
+		if (!peekmessage(&msg)) {
+			continue;
+		}
+		if (msg.x > 474 && msg.x < (474 + 300) 
+			&& msg.y > 75 && msg.y < (75 + 140)) {
+			flag0 = 1;
+		}
+		else {
+			flag0 = 0;
+		}
+		if (msg.message == WM_LBUTTONUP && flag0) {
+			EndBatchDraw();
+			break;
+		}
+	}
+}
+
+void Game::Ready(){
+	IMAGE r[4];
+	loadimage(&imgbg, "images/bg.jpg");
+	loadimage(&r[1], "images/StartReady.png");
+	loadimage(&r[2], "images/StartSet.png");
+	loadimage(&r[3], "images/StartPlant.png");
+	putimage(-112, 0, &imgbg);
+	int qwq = 0;
+	for (int i = 1; i <= 3; i++) {
+		while (qwq <= 600) {
+			qwq += getdelay();
+			putimage(400, 200, &r[i]);
+		}
+		qwq = 0;
 	}
 }

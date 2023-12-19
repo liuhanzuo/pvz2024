@@ -3,20 +3,22 @@
 #include<time.h>
 #include<mmsystem.h>
 #include<Windows.h>
-//QÊÇ²ù×Ó£¬¿Õ¸ñ»áÊ¹½©Ê¬Éú³ÉËÙ¶È±äÎªÎå±¶£¬Í¬Ê±Íã¶¹ÉäÊÖÒ»´ÎÉßµÄÍã¶¹ÊýÁ¿±äÎªÁ½±¶
+//Qï¿½Ç²ï¿½ï¿½Ó£ï¿½ï¿½Õ¸ï¿½ï¿½Ê¹ï¿½ï¿½Ê¬ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È±ï¿½Îªï¿½å±¶ï¿½ï¿½Í¬Ê±ï¿½ã¶¹ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ßµï¿½ï¿½ã¶¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
 #pragma comment(lib,"winmm.lib")
 const int width = 900;
 const int height= 600;
 const int rowl = 3;
 const int columnl = 9;
 const int ballmax = 10;
+//PIG
 int cnt = 4, startx = 325  , dis = 65, starty = 2;
-int curx, cury, curzhiwu = 0;//0:Ã»Ñ¡ÖÐ£»k£ºµÚkÖÖ
+int curx, cury, curzhiwu = 0;//0:Ã»Ñ¡ï¿½Ð£ï¿½kï¿½ï¿½ï¿½ï¿½kï¿½ï¿½
 int zmsamount = 25, zmscreate = 0, zmsdied = 0;
 static int status = 0;
+//PIGEND
 struct plant {
 	int type=0;//0 refers to no plants, and positive integeres refer to rank
-	int frameindex=0;//Ö¡ÊýÐòºÅ
+	int frameindex=0;//Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½
 	int eat;
 	int hp;
     int timer;
@@ -25,8 +27,8 @@ int needsun[10];
 struct sunshine {
 	int x, y;
 	int frameindex;
-	int desty;//Ä¿±êÎ»ÖÃy×ø±ê
-	int flag;//ÊÇ·ñÔÚÏÔÊ¾
+	int desty;//Ä¿ï¿½ï¿½Î»ï¿½ï¿½yï¿½ï¿½ï¿½ï¿½
+	int flag;//ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
 	int time;
 	int startx;
 	int starty;
@@ -35,9 +37,11 @@ struct sunshine {
 	int collect;
 	int createdby;
 }ball[ballmax];
+//PIG
 IMAGE balls[30];
+//PIGEND
 int cursun = 150;
-//Ñô¹â³Ø£¬°ÑËùÓÐ¿ÉÄÜµÄÂ·¾¶·ÅÔÚ³Ø×ÓÀï£¬Ã¿´ÎÄÃÒ»¸ö³öÀ´ÓÃ
+//ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½Üµï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½Ú³ï¿½ï¿½ï¿½ï¿½ï£¬Ã¿ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 struct zm {
 	int x;
 	int y;
@@ -49,45 +53,49 @@ struct zm {
 	int died;
 	int eat;
 }zms[50];
+//PIG
 IMAGE z[25];
 IMAGE zmdied[20];
 IMAGE zmseat[21];
 IMAGE zmsstand[15];
+//PIGEND
 struct bullet { 
 	int x;
 	int y;
 	int row;
 	int speed;
 	int flag;
-	int blast;//ÊÇ·ñ·¢Éú±¬Õ¨
-	int frameindex;//Ö¡ÐòºÅ
+	int blast;//ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Õ¨
+	int frameindex;//Ö¡ï¿½ï¿½ï¿½
 }bullets[50];
+//PIG
 IMAGE bulletn,bulletb;
 IMAGE imgballblast[4];
-void _putimagePNG(int  picture_x, int picture_y, IMAGE* picture) //xÎªÔØÈëÍ¼Æ¬µÄX×ø±ê£¬yÎªY×ø±ê
-{
-	DWORD* dst = GetImageBuffer();    // GetImageBuffer()º¯Êý£¬ÓÃÓÚ»ñÈ¡»æÍ¼Éè±¸µÄÏÔ´æÖ¸Õë£¬EASYX×Ô´ø
-	DWORD* draw = GetImageBuffer();
-	DWORD* src = GetImageBuffer(picture); //»ñÈ¡pictureµÄÏÔ´æÖ¸Õë
-	int picture_width = picture->getwidth(); //»ñÈ¡pictureµÄ¿í¶È£¬EASYX×Ô´ø
-	int picture_height = picture->getheight(); //»ñÈ¡pictureµÄ¸ß¶È£¬EASYX×Ô´ø
-	int graphWidth = getwidth();       //»ñÈ¡»æÍ¼ÇøµÄ¿í¶È£¬EASYX×Ô´ø
-	int graphHeight = getheight();     //»ñÈ¡»æÍ¼ÇøµÄ¸ß¶È£¬EASYX×Ô´ø
-	int dstX = 0;    //ÔÚÏÔ´æÀïÏñËØµÄ½Ç±ê
 
-	// ÊµÏÖÍ¸Ã÷ÌùÍ¼ ¹«Ê½£º Cp=¦Áp*FP+(1-¦Áp)*BP £¬ ±´Ò¶Ë¹¶¨ÀíÀ´½øÐÐµãÑÕÉ«µÄ¸ÅÂÊ¼ÆËã
+void _putimagePNG(int  picture_x, int picture_y, IMAGE* picture) //xÎªï¿½ï¿½ï¿½ï¿½Í¼Æ¬ï¿½ï¿½Xï¿½ï¿½ï¿½ê£¬yÎªYï¿½ï¿½ï¿½ï¿½
+{
+	DWORD* dst = GetImageBuffer();    // GetImageBuffer()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú»ï¿½È¡ï¿½ï¿½Í¼ï¿½è±¸ï¿½ï¿½ï¿½Ô´ï¿½Ö¸ï¿½ë£¬EASYXï¿½Ô´ï¿½
+	DWORD* draw = GetImageBuffer();
+	DWORD* src = GetImageBuffer(picture); //ï¿½ï¿½È¡pictureï¿½ï¿½ï¿½Ô´ï¿½Ö¸ï¿½ï¿½
+	int picture_width = picture->getwidth(); //ï¿½ï¿½È¡pictureï¿½Ä¿ï¿½ï¿½È£ï¿½EASYXï¿½Ô´ï¿½
+	int picture_height = picture->getheight(); //ï¿½ï¿½È¡pictureï¿½Ä¸ß¶È£ï¿½EASYXï¿½Ô´ï¿½
+	int graphWidth = getwidth();       //ï¿½ï¿½È¡ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½È£ï¿½EASYXï¿½Ô´ï¿½
+	int graphHeight = getheight();     //ï¿½ï¿½È¡ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ä¸ß¶È£ï¿½EASYXï¿½Ô´ï¿½
+	int dstX = 0;    //ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ½Ç±ï¿½
+
+	// Êµï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½Í¼ ï¿½ï¿½Ê½ï¿½ï¿½ Cp=ï¿½ï¿½p*FP+(1-ï¿½ï¿½p)*BP ï¿½ï¿½ ï¿½ï¿½Ò¶Ë¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½É«ï¿½Ä¸ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½
 	for (int iy = 0; iy < picture_height; iy++)
 	{
 		for (int ix = 0; ix < picture_width; ix++)
 		{
-			int srcX = ix + iy * picture_width; //ÔÚÏÔ´æÀïÏñËØµÄ½Ç±ê
-			int sa = ((src[srcX] & 0xff000000) >> 24); //0xAArrggbb;AAÊÇÍ¸Ã÷¶È
-			int sr = ((src[srcX] & 0xff0000) >> 16); //»ñÈ¡RGBÀïµÄR
+			int srcX = ix + iy * picture_width; //ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ½Ç±ï¿½
+			int sa = ((src[srcX] & 0xff000000) >> 24); //0xAArrggbb;AAï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½
+			int sr = ((src[srcX] & 0xff0000) >> 16); //ï¿½ï¿½È¡RGBï¿½ï¿½ï¿½R
 			int sg = ((src[srcX] & 0xff00) >> 8);   //G
 			int sb = src[srcX] & 0xff;              //B
 			if (ix >= 0 && ix <= graphWidth && iy >= 0 && iy <= graphHeight && dstX <= graphWidth * graphHeight)
 			{
-				dstX = (ix + picture_x) + (iy + picture_y) * graphWidth; //ÔÚÏÔ´æÀïÏñËØµÄ½Ç±ê
+				dstX = (ix + picture_x) + (iy + picture_y) * graphWidth; //ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ØµÄ½Ç±ï¿½
 				int dr = ((dst[dstX] & 0xff0000) >> 16);
 				int dg = ((dst[dstX] & 0xff00) >> 8);
 				int db = dst[dstX] & 0xff;
@@ -139,6 +147,8 @@ void putimagePNG(int x, int y, IMAGE* picture) {
 
 	_putimagePNG(x, y, picture);
 }
+//PIGEND
+
 int getdelay() {
 	static unsigned long long lastTime = 0;
 	unsigned long long currentTime = GetTickCount();
@@ -160,27 +170,28 @@ bool fileexist(const char* name) {
 	return fp != NULL;
 }
 using namespace std;
-//ÓÎÏ·³õÊ¼»¯
+//PIG
 IMAGE imgbg,imgbar,imgcards[16],* imgzhiwu[16][32];
+//ENDPIG
 void gameInit() {
-	//¼ÓÔØÓÎÏ·±³¾°Í¼Æ¬
-	//°Ñ×Ö·û¼¯¸Ä³É ¶à×Ö½Ú×Ö·û¼¯
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½Í¼Æ¬
+	//ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ ï¿½ï¿½ï¿½Ö½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½
 	loadimage(&imgbg, "images/bg.jpg");
 	loadimage(&imgbar, "images/bar4.png");
 	memset(imgzhiwu, 0, sizeof(imgzhiwu));
 	memset(zw, 0, sizeof(zw));
-	//´´½¨ÓÎÏ·´°¿Ú
-	//³õÊ¼»¯Ö²Îï¿¨ÅÆ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½Ê¼ï¿½ï¿½Ö²ï¿½ï¿¨ï¿½ï¿½
 	char name[64];
 	for (int i = 0; i < cnt; i++) {
-		//Éú³ÉÖ²Îï¿¨ÅÆµÄÎÄ¼þÃû
+		//ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿¨ï¿½Æµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
 		sprintf_s(name, sizeof(name), "images/Cards/card_%d.png", i + 1);
 		loadimage(&imgcards[i], name);
 		for (int j = 0; j < 20; j++) {
 			sprintf_s(name, sizeof(name), "images/zhiwu/%d/%d.png", i, j + 1);
-			//ÏÈÅÐ¶ÏÎÄ¼þÊ±ÊÇ·ñ´æÔÚ
+			//ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ä¼ï¿½Ê±ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
 			if (fileexist(name)) {
-				//Ä¿Ç°Ö¸ÕëÎª¿Õ£¬ÐèÒªÏÈ·ÖÅäÄÚ´æ
+				//Ä¿Ç°Ö¸ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½Òªï¿½È·ï¿½ï¿½ï¿½ï¿½Ú´ï¿½
 				imgzhiwu[i][j] = new IMAGE;
 				loadimage(imgzhiwu[i][j], name);
 			}
@@ -205,7 +216,7 @@ void gameInit() {
 	}
 	memset(bullets, 0, sizeof(bullets));
 	loadimage(&bulletn, "images/bullets/bullet_normal.png");
-	//³õÊ¼»¯Ö¡Êý×é
+	//ï¿½ï¿½Ê¼ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½
 	loadimage(&imgballblast[3], "images/bullets/bullet_blast.png");
 	for (int i = 0; i < 3; i++) {
 		float k = (i + 1) * 0; 2;
@@ -223,23 +234,24 @@ void gameInit() {
 		sprintf_s(name, sizeof(name), "images/zm_stand/%d.png", i + 1);
 		loadimage(&zmsstand[i], name);
 	}
-	//Ëæ»ú
+	//ï¿½ï¿½ï¿½
 	srand(time(NULL));
-	//Éú³É½çÃæ
+	//ï¿½ï¿½ï¿½É½ï¿½ï¿½ï¿½
 	initgraph(width, height, 1);
-	//ÉèÖÃ×ÖÌå
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	LOGFONT f;
 	gettextstyle(&f);
 	f.lfHeight = 30;
 	f.lfWeight = 15;
 	strcpy(f.lfFaceName, "Segoe UI Black");
-	f.lfQuality = ANTIALIASED_QUALITY;//¿¹¾â³ÝÐ§¹û
+	f.lfQuality = ANTIALIASED_QUALITY;//ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
 	settextstyle(&f);
 	setbkmode(TRANSPARENT);
 	setcolor(BLACK);
 }
+//PIG
 void imagesunshine() {
-	//ÏÔÊ¾Ñô¹â
+	//ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
 	for (int i = 0; i < ballmax; i++) {
 		if (ball[i].flag) {
 			ball[i].time++;
@@ -286,9 +298,10 @@ void imagebullet() {
 		}
 	}
 }
+//PIGEND
 void updateimage(){
-	//Ë«»º³å
-	BeginBatchDraw();//¿ªÊ¼»º³å
+	//Ë«ï¿½ï¿½ï¿½ï¿½
+	BeginBatchDraw();//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 	putimage(-112, 0, &imgbg);
 	putimage(250, 0, &imgbar);
 	for (int i = 0; i < cnt; i++) {
@@ -310,7 +323,7 @@ void updateimage(){
 			}
 		}
 	}
-	//äÖÈ¾ÍÏ¶¯ÖÐµÄÖ²Îï
+	//ï¿½ï¿½È¾ï¿½Ï¶ï¿½ï¿½Ðµï¿½Ö²ï¿½ï¿½
 	if (curzhiwu) {
 		IMAGE* img = imgzhiwu[curzhiwu - 1][0];
 		putimagePNG(curx - img->getwidth() / 2, cury - img->getheight() / 2, img);
@@ -323,6 +336,7 @@ void updateimage(){
 	outtextxy(276,55,text);
 	EndBatchDraw();
 }
+
 bool win() {
 	if (zmsdied >= zmsamount) {
 		IMAGE imgwon;
@@ -334,6 +348,7 @@ bool win() {
 	}
 	return true;
 }
+
 void collectsunshine(ExMessage* msg) {
 	int w = balls[0].getwidth();
 	int h = balls[0].getheight();
@@ -346,8 +361,9 @@ void collectsunshine(ExMessage* msg) {
 		}
 	}
 }
+
 void userclick() {
-	//»ñµÃÏûÏ¢£¨ÒÆ¶¯Ö®ÀàµÄ£©
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Æ¶ï¿½Ö®ï¿½ï¿½Ä£ï¿½
 	ExMessage msg;
 	if (peekmessage(&msg)) {
 		if (msg.message == WM_LBUTTONDOWN) {
@@ -385,8 +401,9 @@ void userclick() {
 		}
 	}
 }
+
 void createsun(int x, int y, int created) {
-	//´ÓÑô¹â³ØÀïÈ¡Ò»¸öÄÜÓÃµÄ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½
 	int i = 0;
 	while (i < ballmax && ball[i].flag)
 		i++;
@@ -399,8 +416,9 @@ void createsun(int x, int y, int created) {
 	ball[i].desty = 200 + (rand() % 4) * 90;
 	ball[i].createdby = created;
 }
+
 void createsunshine() {
-	//Ã¿¸ôfre¾Í²úÉúÒ»¸öÑô¹â
+	//Ã¿ï¿½ï¿½freï¿½Í²ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	static int count = 0;
 	static int fre = 50;
 	count++;
@@ -413,6 +431,7 @@ void createsunshine() {
 	int y = 80;
 	createsun(x ,y, 0);
 }
+
 void sunflowercreatesunshine() {
 	for (int i = 0; i < rowl; i++) {
 		for (int j = 0; j < columnl; j++) {
@@ -429,6 +448,7 @@ void sunflowercreatesunshine() {
 		}
 	}
 }
+
 void updatesunshine() {
 	for (int i = 0; i < ballmax; i++) {
 		if (ball[i].flag) {
@@ -450,7 +470,7 @@ void updatesunshine() {
 				time0++;
 				ball[i].x = ball[i].startx - (ball[i].startx - 262) / 10 * time0;
 				ball[i].y = ball[i].starty - (ball[i].starty - 0) / 10 * time0;
-				//ÕâÀï»¹ÐèÒªÓÅ»¯Ñô¹â´ÓÔ­Ê¼Î»ÖÃµ½ÊÕ¼¯À¸
+				//ï¿½ï¿½ï¿½ï»¹ï¿½ï¿½Òªï¿½Å»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­Ê¼Î»ï¿½Ãµï¿½ï¿½Õ¼ï¿½ï¿½ï¿½
 				continue;
 			}
 			ball[i].frameindex++;
@@ -465,6 +485,7 @@ void updatesunshine() {
 	}
 	sunflowercreatesunshine();
 }
+
 void createzombies() {
 	if (zmscreate > zmsamount) {
 		return;
@@ -495,6 +516,7 @@ void createzombies() {
 	zms[i].speed = 2 + rand() % 3;
 	zms[i].hp = 100;
 }
+
 void updatezombies() {
 	for (int i = 0; i < 50; i++) {
 		if (zms[i].flag) {
@@ -521,6 +543,7 @@ void updatezombies() {
 		}
 	}
 }
+
 void shoot() {
 	int lines[3] = {0};
 	int zmcnt = 50 ;
@@ -568,6 +591,7 @@ void shoot() {
 		}
 	}
 }
+
 void updatebullet() {
 	for (int i = 0; i < 50; i++) {
 		if (bullets[i].flag) {
@@ -575,7 +599,7 @@ void updatebullet() {
 			if (bullets[i].x > width) {
 				bullets[i].flag = 0;
 			}
-			//ÐèÒªÍêÉÆÅö×²¼ì²â
+			//ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½
 			if (bullets[i].blast) {
 				bullets[i].frameindex++;
 				if (bullets[i].frameindex > 3) {
@@ -585,6 +609,8 @@ void updatebullet() {
 		}
 	}
 }
+
+//PIG
 void collisionbullet2zm() {
 	int bulletmax = 50;
 	int zmsmax = 50;
@@ -652,6 +678,8 @@ void collisioncheck() {
 	collisionbullet2zm();
 	collisionzm2zw();
 }
+//PIGEND
+
 void updategame() {
 	for (int i = 0; i < rowl; i++) {
 		for (int j = 0; j < columnl; j++) {
@@ -671,8 +699,9 @@ void updategame() {
 	updatebullet();
 	collisioncheck();
 }
+
 void start() {
-	//ÖÆ×÷Æô¶¯²Ëµ¥
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½
 	IMAGE imgbg0,imgbg1,imgbg2;
 	loadimage(&imgbg0, "images/menu.png");
 	loadimage(&imgbg1, "images/menu1.png");
@@ -700,6 +729,7 @@ void start() {
 		}
 	}
 }
+
 void ready() {
 	IMAGE r[4];
 	loadimage(&imgbg, "images/bg.jpg");
@@ -716,6 +746,7 @@ void ready() {
 		qwq = 0;
 	}
 }
+
 void view() {
 	int xmin = width - imgbg.getwidth();
 	int xs[9] = { 550,530,630,530,515,565,605,705,690 };
@@ -741,7 +772,7 @@ void view() {
 		EndBatchDraw();
 		Sleep(5);
 	}
-	//Í£Áô1s×óÓÒ
+	//Í£ï¿½ï¿½1sï¿½ï¿½ï¿½ï¿½
 	for (int i = 0; i < 100; i++) {
 		BeginBatchDraw();
 		putimage(xmin, 0, &imgbg);
@@ -773,11 +804,11 @@ int main() {
 	gameInit();
 	int time = 0;
 	bool flag = true;
-	//Æô¶¯²Ëµ¥
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½
 	start();
-	//×ª³¡
+	//×ªï¿½ï¿½
 	view();
-	//Éú²úÑô¹â
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	ready();
 	while (true) {
 		userclick();
