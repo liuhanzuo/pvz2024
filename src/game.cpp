@@ -1,5 +1,10 @@
 #include "game.h"
-void gameInit() {
+
+Game::Game(){
+	
+}
+
+void Game::Init() {
 	loadimage(&imgbg, "images/bg.jpg");
 	loadimage(&imgbar, "images/bar4.png");
 	memset(imgzhiwu, 0, sizeof(imgzhiwu));
@@ -65,7 +70,7 @@ void gameInit() {
 	setcolor(BLACK);
 }
 
-bool Win(){
+bool Game::Win(){
 	if (zmsdied >= zmsamount) {
 		IMAGE imgwon;
 		printf("win\n");
@@ -77,7 +82,7 @@ bool Win(){
 	return true;
 }
 
-void CreateZombies(){
+void Game::CreateZombies(){
 	if (zmscreate > zmsamount) {
 		return;
 	}
@@ -128,7 +133,7 @@ void Game::UpdateStep(){
 	collisioncheck();
 }
 
-void PlayVideo(){
+void Game::PlayVideo(){
 	int xmin = width - imgbg.getwidth();
 	int xs[9] = { 550,530,630,530,515,565,605,705,690 };
 	int ys[9] = { 80,160,170,200,270,370,340,280,340 };
@@ -223,7 +228,7 @@ void Game::Ready(){
 	int qwq = 0;
 	for (int i = 1; i <= 3; i++) {
 		while (qwq <= 600) {
-			qwq += getdelay();
+			qwq += GetDelay();
 			putimage(400, 200, &r[i]);
 		}
 		qwq = 0;

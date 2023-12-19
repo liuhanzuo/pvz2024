@@ -10,12 +10,12 @@ const int height= 600;
 const int rowl = 3;
 const int columnl = 9;
 const int ballmax = 10;
-//PIG
+
 int cnt = 4, startx = 325  , dis = 65, starty = 2;
 int curx, cury, curzhiwu = 0;//0:ûѡ�У�k����k��
 int zmsamount = 25, zmscreate = 0, zmsdied = 0;
 static int status = 0;
-//PIGEND
+
 struct plant {
 	int type=0;//0 refers to no plants, and positive integeres refer to rank
 	int frameindex=0;//֡�����
@@ -37,9 +37,7 @@ struct sunshine {
 	int collect;
 	int createdby;
 }ball[ballmax];
-//PIG
 IMAGE balls[30];
-//PIGEND
 int cursun = 150;
 //����أ������п��ܵ�·�����ڳ����ÿ����һ��������
 struct zm {
@@ -53,12 +51,10 @@ struct zm {
 	int died;
 	int eat;
 }zms[50];
-//PIG
 IMAGE z[25];
 IMAGE zmdied[20];
 IMAGE zmseat[21];
 IMAGE zmsstand[15];
-//PIGEND
 struct bullet { 
 	int x;
 	int y;
@@ -68,10 +64,10 @@ struct bullet {
 	int blast;//�Ƿ�����ը
 	int frameindex;//֡���
 }bullets[50];
-//PIG
 IMAGE bulletn,bulletb;
 IMAGE imgballblast[4];
 
+//PIG
 void _putimagePNG(int  picture_x, int picture_y, IMAGE* picture) //xΪ����ͼƬ��X���꣬yΪY����
 {
 	DWORD* dst = GetImageBuffer();    // GetImageBuffer()���������ڻ�ȡ��ͼ�豸���Դ�ָ�룬EASYX�Դ�
@@ -170,9 +166,9 @@ bool fileexist(const char* name) {
 	return fp != NULL;
 }
 using namespace std;
-//PIG
+
 IMAGE imgbg,imgbar,imgcards[16],* imgzhiwu[16][32];
-//ENDPIG
+
 void gameInit() {
 	//������Ϸ����ͼƬ
 	//���ַ����ĳ� ���ֽ��ַ���
@@ -249,7 +245,7 @@ void gameInit() {
 	setbkmode(TRANSPARENT);
 	setcolor(BLACK);
 }
-//PIG
+
 void imagesunshine() {
 	//��ʾ����
 	for (int i = 0; i < ballmax; i++) {
@@ -298,7 +294,7 @@ void imagebullet() {
 		}
 	}
 }
-//PIGEND
+
 void updateimage(){
 	//˫����
 	BeginBatchDraw();//��ʼ����

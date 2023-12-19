@@ -1,8 +1,10 @@
 #ifndef __IMAGE_H__
 #define __IMAGE_H__
 #include "item.h"
-class Image{
+#include <map>
+#include <string>
+class Atlas{
     public:
-        void image(const Item& it);
+        IMAGE* datas;
 };
 #endif

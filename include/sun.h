@@ -1,18 +1,14 @@
 #ifndef __SUN_H_
 #define __SUN_H_
-#include"putimage.h"
-class Sun{
+#include"item.h"
+class Sun:public Item{
     public:
-    int x, y;
-	int frameindex;
-	int desty;//Ŀ��λ��y����
-	int flag;//�Ƿ�����ʾ
+	int desty;
 	int time;
-	int startx;
-	int starty;
-	float xoff;
-	float yoff;
+	int startx,starty;
+	float xoff,yoff;
 	int collect;
 	int createdby;
+	void GetImaged() override;
 };
 #endif

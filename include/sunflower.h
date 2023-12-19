@@ -3,5 +3,6 @@
 #include "plant.h"
 class SunFlower:public Plant{
     void MakeSun();
+    SunFlower():Plant(SUN){};
 };
 #endif

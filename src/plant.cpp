@@ -1,2 +1,4 @@
 #include"plant.h"
-void 
+void Plant::GetImaged(){
+    
+}

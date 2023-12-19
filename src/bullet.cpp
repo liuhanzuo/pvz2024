@@ -16,3 +16,14 @@ void Bullet::UpdateBullet(){
 		}
 	}
 }
+
+void Bullet::GetImaged()
+{
+	if(!online)return;
+	if(blast){
+		IMAGE* img = &im[BLAST_IMAGE_INDEX].datas[frameindex];
+		putimagePNG(x, y, img);
+	}else {
+		putimagePNG(x, y, &im[NORM_IMAGE_INDEX].datas[frameindex]);
+	}
+}

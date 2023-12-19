@@ -1,4 +1,6 @@
 #include "image.h"
-void image(const Item& it){
-    
+void Atlas::PrintImage(const Item &it){
+    if(it.online){
+        it.time++;
+    }
 }

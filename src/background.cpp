@@ -1,6 +1,6 @@
 #include "background.h"
-int BackGround::getdelay() const {
-	static unsigned long long lastTime = 0;
+int BackGround::GetDelay() const {
+	// lastTime = 0;
 	unsigned long long currentTime = GetTickCount();
 	if (lastTime == 0) {
 		lastTime = currentTime;
@@ -23,32 +23,33 @@ void BackGround::UpdateImage(){
 	BeginBatchDraw();
 	putimage(-112, 0, &imgbg);
 	putimage(250, 0, &imgbar);
-	for (int i = 0; i < cnt; i++) {
+
+	for (int i = 0; i < MAX_PLANT_TYPE; i++) {
 		int x = startx + i * dis;
 		int y = starty;
-		putimage(x, y, &imgcards[i]);
+		putimage(x, y, &cards.data[i]);
 	}
 	for (int i = 0; i < rowl; i++) {
 		for (int j = 0; j < columnl; j++) {
 			int x = 256 -112 + j * 81;
 			int y = 179 + i * 102;
 			int tp = zw[i][j].type;
-			IMAGE* img = imgzhiwu[zw[i][j].type - 1][zw[i][j].frameindex];
-			if (tp&&tp!=3) {
+			IMAGE* img = Plant::im[tp-1].datas[zw[i][j].frameindex];
+			if (tp&&tp!=Plant::MOUTH) {
 				putimagePNG(x, y, img);
 			}
-			else if (tp == 3) {
+			else if (tp == Plant::MOUTH) {
 				putimagePNG(x, y - 25, img);
 			}
 		}
 	}
 	if (curzhiwu) {
-		IMAGE* img = imgzhiwu[curzhiwu - 1][0];
+		IMAGE* img = Plant::im[curzhiwu-1].datas[0];
 		putimagePNG(curx - img->getwidth() / 2, cury - img->getheight() / 2, img);
 	}
-	imagesunshine();
-	imagezombies();
-	imagebullet();
+	for(int i=0;i<ballmax;i++)ball[i].GetImaged();
+	for(int i=0;i<zmsmax;i++)zms[i].GetImaged();
+	for(int i=0;i<bulletmax;i++)bullets[i].GetImaged();
 	char text[16];
 	sprintf_s(text, sizeof(text), "%d", cursun);
 	outtextxy(276,55,text);
@@ -56,8 +57,8 @@ void BackGround::UpdateImage(){
 }
 
 void BackGround::CollectSun(ExMessage* msg) {
-	int w = balls[0].getwidth();
-	int h = balls[0].getheight();
+	int w = Sun::im[0].getwidth();
+	int h = Sun::im[0].getheight();
 	for (int i = 0; i < ballmax; i++) {
 		if (ball[i].flag && !ball[i].collect && (ball[i].x - msg->x + w / 2) * (ball[i].x - msg->x + w / 2)
 			+ (ball[i].y - msg->y+ h/2) * (ball[i].y - msg->y+ h/2) <= (w*w+h*h)/4) {
@@ -79,7 +80,7 @@ void BackGround::UserClick(){
 					curzhiwu = index + 1;
 				}
 			}
-			collectsunshine(&msg);
+			CollectSun(&msg);
 		}
 		else if (msg.message == WM_MOUSEMOVE && status == 1) {
 			curx = msg.x;
@@ -107,8 +108,8 @@ void BackGround::UserClick(){
 	}
 }
 
-void CreateSingleSun(int x,int y,int created){
-    //���������ȡһ�����õ�
+
+void BackGround::CreateSingleSun(int x,int y,int created){
 	int i = 0;
 	while (i < ballmax && ball[i].flag)
 		i++;
@@ -122,9 +123,7 @@ void CreateSingleSun(int x,int y,int created){
 	ball[i].createdby = created;
 }
 
-void MakeSuns(){
-    static int count = 0;
-	static int fre = 50;
+void BackGround::MakeSuns(){
 	count++;
 	if (count < fre) {
 		return;
@@ -136,14 +135,13 @@ void MakeSuns(){
 	CreateSingleSun(x ,y, 0);
 }
 
-void SunFalls(){
+void BackGround::SunFalls(){
     for (int i = 0; i < ballmax; i++) {
 		if (ball[i].flag) {
 			if (ball[i].collect) {
 			    //ball[i].flag = 0;
 				//ball[i].collect = 0;
 				//cursun += 25;
-				static int time0 = 0;
 				if (time0 >= 10) {
 					time0 = 0;
 					ball[i].collect = 0;
@@ -157,7 +155,6 @@ void SunFalls(){
 				time0++;
 				ball[i].x = ball[i].startx - (ball[i].startx - 262) / 10 * time0;
 				ball[i].y = ball[i].starty - (ball[i].starty - 0) / 10 * time0;
-				//���ﻹ��Ҫ�Ż������ԭʼλ�õ��ռ���
 				continue;
 			}
 			ball[i].frameindex++;
@@ -170,10 +167,16 @@ void SunFalls(){
 			}
 		}
 	}
-	sunflowercreatesunshine();
+	for (int i = 0; i < rowl; i++) {
+	    for (int j = 0; j < columnl; j++) {
+			if(zw[i][j].type==Plant::SUN){
+				zw[i][j].MakeSun();
+			}
+		}
+	}
 }
 
-void UpdateZombies(){
+void BackGround::UpdateZombies(){
     for (int i = 0; i < 50; i++) {
 		if (zms[i].flag) {
 			if (zms[i].died) {
