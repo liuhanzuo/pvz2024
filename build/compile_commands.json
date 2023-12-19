@@ -1,0 +1,50 @@
+[
+{
+  "directory": "D:/code/pvz2024/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -I\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/include\" -ID:/code/pvz2024/include  -Wall -g -o CMakeFiles\\example.dir\\src\\putimage.cpp.obj -c D:\\code\\pvz2024\\src\\putimage.cpp",
+  "file": "D:\\code\\pvz2024\\src\\putimage.cpp",
+  "output": "CMakeFiles\\example.dir\\src\\putimage.cpp.obj"
+},
+{
+  "directory": "D:/code/pvz2024/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -I\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/include\" -ID:/code/pvz2024/include  -Wall -g -o CMakeFiles\\example.dir\\src\\gameinit.cpp.obj -c D:\\code\\pvz2024\\src\\gameinit.cpp",
+  "file": "D:\\code\\pvz2024\\src\\gameinit.cpp",
+  "output": "CMakeFiles\\example.dir\\src\\gameinit.cpp.obj"
+},
+{
+  "directory": "D:/code/pvz2024/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -I\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/include\" -ID:/code/pvz2024/include  -Wall -g -o CMakeFiles\\example.dir\\src\\sun.cpp.obj -c D:\\code\\pvz2024\\src\\sun.cpp",
+  "file": "D:\\code\\pvz2024\\src\\sun.cpp",
+  "output": "CMakeFiles\\example.dir\\src\\sun.cpp.obj"
+},
+{
+  "directory": "D:/code/pvz2024/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -I\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/include\" -ID:/code/pvz2024/include  -Wall -g -o CMakeFiles\\example.dir\\src\\plant.cpp.obj -c D:\\code\\pvz2024\\src\\plant.cpp",
+  "file": "D:\\code\\pvz2024\\src\\plant.cpp",
+  "output": "CMakeFiles\\example.dir\\src\\plant.cpp.obj"
+},
+{
+  "directory": "D:/code/pvz2024/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -I\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/include\" -ID:/code/pvz2024/include  -Wall -g -o CMakeFiles\\example.dir\\src\\zombies.cpp.obj -c D:\\code\\pvz2024\\src\\zombies.cpp",
+  "file": "D:\\code\\pvz2024\\src\\zombies.cpp",
+  "output": "CMakeFiles\\example.dir\\src\\zombies.cpp.obj"
+},
+{
+  "directory": "D:/code/pvz2024/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -I\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/include\" -ID:/code/pvz2024/include  -Wall -g -o CMakeFiles\\example.dir\\src\\collision.cpp.obj -c D:\\code\\pvz2024\\src\\collision.cpp",
+  "file": "D:\\code\\pvz2024\\src\\collision.cpp",
+  "output": "CMakeFiles\\example.dir\\src\\collision.cpp.obj"
+},
+{
+  "directory": "D:/code/pvz2024/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -I\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/include\" -ID:/code/pvz2024/include  -Wall -g -o CMakeFiles\\example.dir\\src\\game.cpp.obj -c D:\\code\\pvz2024\\src\\game.cpp",
+  "file": "D:\\code\\pvz2024\\src\\game.cpp",
+  "output": "CMakeFiles\\example.dir\\src\\game.cpp.obj"
+},
+{
+  "directory": "D:/code/pvz2024/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -I\"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/include\" -ID:/code/pvz2024/include  -Wall -g -o CMakeFiles\\main.dir\\main.cpp.obj -c D:\\code\\pvz2024\\main.cpp",
+  "file": "D:\\code\\pvz2024\\main.cpp",
+  "output": "CMakeFiles\\main.dir\\main.cpp.obj"
+}
+]

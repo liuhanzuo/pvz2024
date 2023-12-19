@@ -4,12 +4,19 @@ project(PVZ2023)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
-set(EASYX_DIR "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS")
+#set(EASYX_DIR "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS")
 
-include_directories(${EASYX_DIR}/include)
-link_directories(${EASYX_DIR}/lib)
+#include_directories(${EASYX_DIR}/include)
+#link_directories(${EASYX_DIR}/lib)
 
-add_library(example STATIC src/putimage.cpp src/gameinit.cpp)
+add_library(example STATIC 
+src/putimage.cpp 
+src/gameinit.cpp 
+src/sun.cpp 
+src/plant.cpp 
+src/zombies.cpp 
+src/collision.cpp 
+src/game.cpp)
 
 #add_library(graph STATIC C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/lib/x64/EasyXa.lib)
 
@@ -20,4 +27,4 @@ INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/include")
 #INCLUDE_DIRECTORIES("C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/lib/x64")
 #link_directories(C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/lib/x64)
 #target_link_libraries(main example)
-target_link_libraries(main EasyXa.lib)
+target_link_libraries(main example)

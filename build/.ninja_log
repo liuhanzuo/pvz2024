@@ -1,0 +1,10 @@
+# ninja log v5
+83	5040	7246859932686083	CMakeFiles/main.dir/main.cpp.obj	260a921dc9c273d8
+65	5093	7246859933188161	CMakeFiles/example.dir/src/game.cpp.obj	d3e50fed305221b
+55	5081	7246859933094537	CMakeFiles/example.dir/src/collision.cpp.obj	7e86df8f3c4ad85e
+27	4981	7246859931965222	CMakeFiles/example.dir/src/sun.cpp.obj	10e778c00e53640
+36	4835	7246859930407217	CMakeFiles/example.dir/src/plant.cpp.obj	401010377c2032c3
+21	5105	7246859933269947	CMakeFiles/example.dir/src/gameinit.cpp.obj	9e5bebefefcc708c
+14	5073	7246859933025462	CMakeFiles/example.dir/src/putimage.cpp.obj	75439beeaa7c04a
+44	4925	7246859931473946	CMakeFiles/example.dir/src/zombies.cpp.obj	edd06bad8a576041
+5105	5342	7246859935732200	libexample.a	db732bb21736fedf
