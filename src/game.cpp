@@ -1,23 +1,21 @@
 #include "game.h"
 
 Game::Game(){
-	
+	Init();
+	back->game=this;
 }
 
 void Game::Init() {
-	loadimage(&imgbg, "images/bg.jpg");
-	loadimage(&imgbar, "images/bar4.png");
-	memset(imgzhiwu, 0, sizeof(imgzhiwu));
-	memset(zw, 0, sizeof(zw));
+	back.Init();
 	char name[64];
-	for (int i = 0; i < cnt; i++) {
+	for (int i = 0; i < BackGround::MAX_PLANT_TYPE; i++) {
 		sprintf_s(name, sizeof(name), "images/Cards/card_%d.png", i + 1);
-		loadimage(&imgcards[i], name);
+		loadimage(&cards.datas[i], name);
 		for (int j = 0; j < 20; j++) {
 			sprintf_s(name, sizeof(name), "images/zhiwu/%d/%d.png", i, j + 1);
-			if (fileexist(name)) {
-				imgzhiwu[i][j] = new IMAGE;
-				loadimage(imgzhiwu[i][j], name);
+			if (back->fileexist(name)) {
+				plantimages[i].datas[j] = new IMAGE;
+				loadimage(plantimages[i].datas[j], name);
 			}
 			else {
 				break;
@@ -31,31 +29,32 @@ void Game::Init() {
 	memset(ball, 0, sizeof(ball));
 	for (int i = 1; i <= 29; i++) {
 		sprintf_s(name, sizeof(name), "images/sunshine/%d.png", i);
-		loadimage(&balls[i-1], name);
+		loadimage(&sunimages[0].datas[i-1], name);
 	}
 	memset(zms, 0, sizeof(zms));
 	for (int i = 1; i <= 22; i++) {
 		sprintf_s(name, sizeof(name), "images/zm/%d.png", i);
-		loadimage(&z[i-1], name);
-	}
-	memset(bullets, 0, sizeof(bullets));
-	loadimage(&bulletn, "images/bullets/bullet_normal.png");
-	loadimage(&imgballblast[3], "images/bullets/bullet_blast.png");
-	for (int i = 0; i < 3; i++) {
-		float k = (i + 1) * 0; 2;
-		loadimage(&imgballblast[i], "images/bulltes/bullet_blast.png", imgballblast[3].getwidth() * k, imgballblast[3].getheight()*k);
+		loadimage(&zombieimages[Zombies::WALK_IMAGE_INDEX].datas[i-1], name);
 	}
 	for (int i = 0; i < 20; i++) {
 		sprintf_s(name,sizeof(name), "images/zm_dead/%d.png", i + 1);
-		loadimage(&zmdied[i], name);
+		loadimage(&zombieimages[Zombies::DEAD_IMAGE_INDEX].datas[i], name);
 	}
 	for (int i = 0; i < 21; i++) {
 		sprintf_s(name, sizeof(name), "images/zm_eat/%d.png", i + 1);
-		loadimage(&zmseat[i], name);
+		loadimage(&zombieimages[Zombies::EAT_IMAGE_INDEX].datas[i], name);
 	}
 	for (int i = 0; i < 11; i++) {
 		sprintf_s(name, sizeof(name), "images/zm_stand/%d.png", i + 1);
-		loadimage(&zmsstand[i], name);
+		loadimage(&zombieimages[Zombies::STAND_IMAGE_INDEX].datas[i], name);
+	}
+	memset(bullets, 0, sizeof(bullets));
+	loadimage(&bulletimages[Bullet::NORM_IMAGE_INDEX].datas[0], "images/bullets/bullet_normal.png");
+	loadimage(&bulletimages[Bullet::BLAST_IMAGE_INDEX].datas[3], "images/bullets/bullet_blast.png");
+	for (int i = 0; i < 3; i++) {
+		float k = (i + 1) * 0; 2;
+		auto& ref=bulletimages[Bullet::BLAST_IMAGE_INDEX].datas[3];
+		loadimage(&bulletimages[Bullet::BLAST_IMAGE_INDEX].datas[i], "images/bulltes/bullet_blast.png", ref.getwidth() * k, ref.getheight()*k);
 	}
 	srand(time(NULL));
 	initgraph(width, height, 1);
@@ -71,7 +70,7 @@ void Game::Init() {
 }
 
 bool Game::Win(){
-	if (zmsdied >= zmsamount) {
+	if (back.zmsdied >= back.zmsamount) {
 		IMAGE imgwon;
 		printf("win\n");
 		loadimage(&imgwon, "images/Credits_ZombieNote.png");
@@ -83,12 +82,10 @@ bool Game::Win(){
 }
 
 void Game::CreateZombies(){
-	if (zmscreate > zmsamount) {
+	if (back->zmscreate > back->zmsamount) {
 		return;
 	}
-	static int count = 0;
-	static int fr=150;
-	static int fre = 150;
+	
 	if (GetAsyncKeyState(VK_SPACE)) {
 		fr = 30;
 	}
@@ -113,25 +110,7 @@ void Game::CreateZombies(){
 	zms[i].hp = 100;
 }
 
-void Game::UpdateStep(){
-	for (int i = 0; i < rowl; i++) {
-		for (int j = 0; j < columnl; j++) {
-			if (!zw[i][j].type) {
-				continue;
-			}
-			zw[i][j].frameindex++;
-			if (imgzhiwu[zw[i][j].type - 1][zw[i][j].frameindex] == NULL)
-				zw[i][j].frameindex = 0;
-		}
-	}
-	createsunshine();
-	updatesunshine();
-	createzombies();
-	updatezombies();
-	shoot();
-	updatebullet();
-	collisioncheck();
-}
+
 
 void Game::PlayVideo(){
 	int xmin = width - imgbg.getwidth();

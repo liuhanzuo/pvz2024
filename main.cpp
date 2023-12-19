@@ -1,7 +1,8 @@
 #include"game.h"
-#include"gameinit.h"
+
 int main() {
-	gameInit();
+	Game g;
+	g.gameInit();
 	int time = 0;
 	bool flag = true;
 	start();
@@ -9,7 +10,7 @@ int main() {
 	ready();
 	while (true) {
 		userclick();
-		time += getdelay();
+		time += GetDelay();
 		if (time > 50) {
 			flag = true;
 			time = 0;

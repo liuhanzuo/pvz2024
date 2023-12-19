@@ -4,3 +4,8 @@ void Atlas::PrintImage(const Item &it){
         it.time++;
     }
 }
+
+void Atlas::Init()
+{
+    memset(datas,0,sizeof(datas));
+}

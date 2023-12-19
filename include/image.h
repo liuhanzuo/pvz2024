@@ -5,6 +5,8 @@
 #include <string>
 class Atlas{
     public:
-        IMAGE* datas;
+        IMAGE datas[BackGround::ATLAS_MAX];
+        void Init();
+        Atlas(){Init();}
 };
 #endif

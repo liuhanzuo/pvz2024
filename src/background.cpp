@@ -1,6 +1,12 @@
 #include "background.h"
-int BackGround::GetDelay() const {
-	// lastTime = 0;
+void BackGround::Init()
+{
+	loadimage(&imgbg, "images/bg.jpg");
+	loadimage(&imgbar, "images/bar4.png");
+}
+int BackGround::GetDelay() const
+{
+    // lastTime = 0;
 	unsigned long long currentTime = GetTickCount();
 	if (lastTime == 0) {
 		lastTime = currentTime;
@@ -201,4 +207,24 @@ void BackGround::UpdateZombies(){
 				zms[i].x -= zms[i].speed;
 		}
 	}
+}
+
+void BackGround::UpdateStep(){
+	for (int i = 0; i < rowl; i++) {
+		for (int j = 0; j < columnl; j++) {
+			if (!zw[i][j].type) {
+				continue;
+			}
+			zw[i][j].frameindex++;
+			if (imgzhiwu[zw[i][j].type - 1][zw[i][j].frameindex] == NULL)
+				zw[i][j].frameindex = 0;
+		}
+	}
+	MakeSuns();
+	SunFalls();
+	game->createzombies();
+	UpdateZombies();
+	shoot();
+	updatebullet();
+	collisioncheck();
 }
